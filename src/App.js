@@ -1,25 +1,55 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
 
-function App() {
+const App = () => {
+  let [index, setIndex] = useState(false);
+  let [text, setText] = useState("");
+  let [list, setList] = useState([]);
+
+  const handelAdd = () => {
+    if (text.trim()) {
+      setList([
+        ...list,
+        { id: Date.now(), task: text.trim(), complition: false },
+      ]);
+      setText("");
+    }
+  };
+  const handelDelete = (listid) => {
+    setList(list.filter((task) => task.id !== listid));
+  };
+
+  const handleComplition = (comid) => {
+    setList(list.map((gojo)=>
+      gojo.id===comid?{...gojo,complition:!gojo.complition}:gojo
+    ))
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="body">
+      <div>
+      <input value={text} onChange={(e) => setText(e.target.value)} />
+      {text.trim() && <button onClick={handelAdd}>Add</button>}
+      </div>
+
+      <div className="list">
+        {list.map((item) => (
+          <label key={item.id}>
+            <input
+              type="checkbox"
+              checked={item.complition}
+              onChange={()=>handleComplition(item.id)}
+            />
+            <span
+              style={{ textDecoration: item.complition ? "line-through" : "" }}
+            >
+              {item.task}
+            </span>
+            <button onClick={() => handelDelete(item.id)}>Delete</button>
+          </label>
+        ))}
+      </div>
     </div>
   );
-}
+};
 
 export default App;
